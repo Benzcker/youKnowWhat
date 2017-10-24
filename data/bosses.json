@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Slime",
+        "imgPath": "img//slime//",
+        "damageMult": 2,
+        "healthMult": 20
+    },
+    {
+        "name": "Golem",
+        "imgPath": "img//golem//",
+        "damageMult": 6,
+        "healthMult": 10
+    }
+]
