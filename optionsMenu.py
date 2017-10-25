@@ -3,16 +3,19 @@
 import drawer
 from button import Button
 from numberInput import Numfield
-from pygame import Rect as pyrect
+from pygame import Rect as pyrect, QUIT as PYQUIT, MOUSEBUTTONUP as PYMOUSEBUTTONUP, mouse, KEYUP as PYKEYUP, K_ESCAPE 
 import options
 
 OPTIONS = options.loadOptions()
 
 class optionsMenu(object):
 
-    def __init__(self):
+    def __init__(self, numKeys, numpadKeys):
         self.buttonW = int(drawer.DISPLAY_WIDTH / 2)
         self.buttonH = int(drawer.DISPLAY_HEIGHT / 8)
+
+        self.numKeys = numKeys
+        self.numpadKeys = numpadKeys
 
         self.selected = 0
 
@@ -21,6 +24,31 @@ class optionsMenu(object):
         self.resolutionOptions = resolutionOptions(int(drawer.CENTER[1]*0.4), int(drawer.DISPLAY_WIDTH*0.15), int(drawer.DISPLAY_HEIGHT/15), "Bildschirmauflösung*: ")
 
         self.credits = Credits( ("CREDITS:", "Programming: Benito Zenz", "Graphics: Richard Ernst", "", "* Spiel neu starten, um Änderungen anzuwenden"))
+
+
+    def update(self, events, dt):
+        for event in events:
+            if event.type == PYQUIT:
+                #Aufs rote Kreuz gedrückt
+                return 4
+            elif event.type == PYMOUSEBUTTONUP and event.button == 1:
+                pressedButton = self.checkButtons(mouse.get_pos())
+                if pressedButton == 1:
+                    return 0
+            elif event.type == PYKEYUP:
+                # Taste losgelassen
+                if self.selected == 0:
+                    if event.key == K_ESCAPE:
+                        return 0
+                else:
+                    if event.key == K_ESCAPE:
+                        self.select(0)
+                    else:
+                        self.write(event.key, self.numKeys, self.numpadKeys)
+
+        self.resolutionOptions.update()
+        return 3
+
 
     def checkButtons(self, mousePos):
         """Testet, ob irgendein Knopf gedrückt wurde"""
@@ -89,7 +117,8 @@ class optionsMenu(object):
         """Gibt ein Tuple mit allen Elementen, die gemalt werden sollen, zurück"""
         return ( 
             self.backButton,
-            self.credits
+            self.credits,
+            self.resolutionOptions
             )
 
 class resolutionOptions(object):
@@ -108,7 +137,7 @@ class resolutionOptions(object):
         self.widthField.updateTextObj()
         self.heightField.updateTextObj()
     
-    def update(self, dt):
+    def update(self):
         """Auflösungsoptionen aktualisieren"""
         pass
     

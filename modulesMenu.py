@@ -4,6 +4,7 @@ from copy import copy
 import drawer
 from button import Button
 import modules
+from pygame import QUIT as PYQUIT, MOUSEBUTTONUP as PYMOUSEBUTTONUP, mouse, KEYUP as PYKEYUP, K_ESCAPE
 
 class modulesMenu(object):
 
@@ -13,6 +14,21 @@ class modulesMenu(object):
 
         self.backButton = Button(int(drawer.CENTER[0]*0.1), int(drawer.CENTER[1]*0.1), int(self.buttonW/3), self.buttonH, (200, 74, 74), "Back")
         self.moduleSelector = moduleSelector()
+
+    def update(self, events, dt):
+        for event in events:
+                if event.type == PYQUIT:
+                    #Aufs rote Kreuz gedrückt
+                    RUNNING = False
+                elif event.type == PYMOUSEBUTTONUP and event.button == 1:
+                    pressedButton = self.checkButtons(mouse.get_pos())
+                    if pressedButton == 1:
+                        return 0
+                elif event.type == PYKEYUP:
+                    # Taste losgelassen
+                    if event.key == K_ESCAPE:
+                        return 0
+        return 2
 
     def checkButtons(self, mousePos):
         """Testet, ob irgendein Knopf gedrückt wurde"""
